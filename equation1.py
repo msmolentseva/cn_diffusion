@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
+plt.ion()
 
 def D(x):
   res = x**2 + 1
@@ -59,6 +60,9 @@ for t in np.arange(0.0,30.0,dt):
   #du=du1.copy()
 
 #print du1
-plt.plot(L, du1)
-plt.show()
+  plt.clf()
+  plt.ylim((0,1))
+  plt.plot(L, du)
+  plt.pause(0.1)
+raw_input()
     
