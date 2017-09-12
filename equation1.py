@@ -1,12 +1,15 @@
+#diffusion equation du/dt=c*d2u/dx2 in 1D
+#Crank-Nicolson discretization scheme in time, centered discretization scheme in space
+#periodic boundary conditions
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import animation
 plt.ion()
 
 def D(x):
   res = x**2 + 1
   return res
 
+#define initial function
 def u(x):
   x0=0.2
   sigma=10.0
@@ -24,26 +27,34 @@ du=0.0*np.ones(len(L))
 du1=0.0*np.ones(len(L))
 n=len(L)-1
 
+mu=0.5*dt*c/dx**2
+if mu<=0.5:
+  print "Courant number ", mu, " -> stable"
+else:
+  print "Courant number ", mu, " -> unstable"
+
 for i in range(0,n-1):
   du[i]=u(L[i])
 
-#print du
+plt.plot(L, du)
 
-#plt.plot(L, du)
-#plt.show()
-mu=0.5*dt*c/dx**2
-  
+
 for t in np.arange(0.0,30.0,dt):
-  #predictor
-  #mu=0.5*dt*c/dx**2
+  #predictor du1
   du1[0]=mu*du[1] + (1.0-2.0*mu)*du[0] + mu*du[n-1]
   du1[n-1]=mu*du[0] + (1.0-2.0*mu)*du[n-1] + mu*du[n-2]
   for i in range(1,n-1):
     x=dx*(i+1)
-   # mu=0.5*dt*c/x**2
     du1[i]=mu*du1[i+1] + (1.0-2.0*mu)*du1[i] + mu*du1[i-1]
   
-  #corrector
+  #corrector du
+#solving three-diagonal matrix |C B 0 0 0 ... 0|
+#                              |A C B 0 0 ... 0|
+#                              |0 A C B 0 ... 0|
+#                              |0     ...     0|
+#                              |0 ... 0 0 A C B|
+#                              |0 ... 0 0 0 A C|
+# A=B=-mu, C=1+2*mu
   beta=np.zeros(n+1)
   alfa=np.zeros(n+1)
   #steps forward
@@ -57,9 +68,7 @@ for t in np.arange(0.0,30.0,dt):
   du[n]=(du1[n]+mu*beta[n])/(1+2*mu-mu*alfa[n])
   for i in range(n,0,-1):
     du[i-1]=alfa[i]*du[i]+beta[i]
-  #du=du1.copy()
 
-#print du1
   plt.clf()
   plt.ylim((0,1))
   plt.plot(L, du)
