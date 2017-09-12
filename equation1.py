@@ -11,8 +11,8 @@ def D(x):
 
 #define initial function
 def u(x):
-  x0=0.2
-  sigma=10.0
+  x0=0.7
+  sigma=0.5
   if (np.abs(x-x0)<=sigma):
     res=0.5*(1.0+np.cos(np.pi*(x-x0)/sigma))
   else:
@@ -36,13 +36,13 @@ else:
 for i in range(0,n-1):
   du[i]=u(L[i])
 
-plt.plot(L, du)
+#plt.plot(L, du)
 
 
 for t in np.arange(0.0,30.0,dt):
   #predictor du1
   du1[0]=mu*du[1] + (1.0-2.0*mu)*du[0] + mu*du[n-1]
-  du1[n-1]=mu*du[0] + (1.0-2.0*mu)*du[n-1] + mu*du[n-2]
+  du1[n]=(1.0-2.0*mu)*du[n] + mu*du[n-1] + mu*du[0]
   for i in range(1,n-1):
     x=dx*(i+1)
     du1[i]=mu*du1[i+1] + (1.0-2.0*mu)*du1[i] + mu*du1[i-1]
@@ -70,7 +70,7 @@ for t in np.arange(0.0,30.0,dt):
     du[i-1]=alfa[i]*du[i]+beta[i]
 
   plt.clf()
-  plt.ylim((0,1))
+  plt.ylim((0,0.05))
   plt.plot(L, du)
   plt.pause(0.1)
 raw_input()
