@@ -4,6 +4,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.linalg as sl
+from matplotlib.animation import FuncAnimation
 plt.ion()
 
 def D(x):
@@ -22,8 +23,8 @@ def u(x):
 
 dx=0.4
 L=np.arange(0.0,50.0,dx)
-dt=0.5
-c=0.1
+dt=10
+c=0.01
 du=0.0*np.ones(len(L))
 du1=0.0*np.ones(len(L))
 du2=0.0*np.ones(len(L))
@@ -35,14 +36,14 @@ if mu<=0.5:
 else:
   print "Courant number ", mu, " -> unstable"
 
-for i in range(0,n-1):
+for i in range(0,n):
   du[i]=u(L[i])
 
 plt.plot(L, du)
 #print du
 #print mu
 
-for t in np.arange(0.0,30.1,dt):
+for t in np.arange(0.0,1000.1,dt):
   #predictor du1
   #mu=0.5*dt*c/dx**2
   du1[0]=mu*du[1] + (1.0-2.0*mu)*du[0] + mu*du[n]
@@ -73,15 +74,18 @@ for t in np.arange(0.0,30.1,dt):
 #    du[i-1]=alfa[i]*du[i]+beta[i]
 
   M=np.zeros((n+1,n+1))
-  for i in range(1,n-1):
-      M[i-1,i]=-mu
+  for i in range(1,n):
+      M[i,i-1]=-mu
       M[i,i]=1.0+2.0*mu
       M[i,i+1]=-mu
   M[0,0]=1.0+2.0*mu
   M[n,n]=1.0+2.0*mu
-  du = sl.solve_triangular(M,du1)
+  M[0,1]=-mu
+  M[n,n-1]=-mu
+#  du = sl.solve_triangular(M,du1)
+  du=du1.copy()
 
-  plt.clf()
+#  plt.clf()
   plt.ylim((0,1.0))
   plt.plot(L, du)
   plt.pause(0.1)

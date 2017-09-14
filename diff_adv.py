@@ -22,7 +22,7 @@ def u(x):
 dx=0.4
 L=np.arange(0.0,50.0,dx)
 dt=0.5
-c=0.1
+c=0.5
 k=-0.3
 du=0.0*np.ones(len(L))
 du1=0.0*np.ones(len(L))
@@ -31,6 +31,7 @@ n=len(L)-1
 
 la=0.25*dt*k/dx
 mu=0.5*dt*c/dx**2
+print np.max(np.abs(la),np.abs(mu))
 
 for i in range(0,n-1):
   du[i]=u(L[i])
